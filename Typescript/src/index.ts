@@ -1,6 +1,11 @@
 import { Temporal } from "temporal-polyfill";
 
-import { addDays, isBeforeNoon } from "./dateUtils";
+import {
+  addDays,
+  isBeforeNoon,
+  isFridayOrSaturday,
+  isThursdayToSunday,
+} from "./dateUtils";
 
 export enum Size {
   Small,
@@ -16,16 +21,41 @@ export class Cake {
   ) {}
 
   public order(orderTime: Temporal.PlainDateTime): Temporal.PlainDate {
-    const leadTime = this.getLeadTime(orderTime);
-    const result = addDays(orderTime, leadTime).toPlainDate();
-    return result;
+    const startBaking = this.startBaking(orderTime);
+    return addDays(startBaking, this.leadTime()).toPlainDate();
   }
 
-  private getLeadTime(orderTime: Temporal.PlainDateTime): number {
+  private startBaking(orderTime: Temporal.PlainDateTime) {
+    const startNextDay = isBeforeNoon(orderTime)
+      ? orderTime
+      : addDays(orderTime, 1);
+
+    return this.nextBakingDay(startNextDay);
+  }
+
+  private nextBakingDay(date: Temporal.PlainDateTime) {
+    let daysUntilNextBakingDay = 0;
+
+    if (this.size === Size.Small) {
+      daysUntilNextBakingDay = isFridayOrSaturday(date) ? 2 : 0;
+    }
+
+    if (this.size === Size.Big) {
+      daysUntilNextBakingDay = isThursdayToSunday(date)
+        ? (1 + 7 - date.dayOfWeek) % 7 || 7
+        : 0;
+    }
+
+    return new Temporal.PlainDateTime(
+      date.year,
+      date.month,
+      date.day + daysUntilNextBakingDay,
+      date.hour
+    );
+  }
+
+  private leadTime(): number {
     const defaultLeadTime = this.size === Size.Big || this.box ? 3 : 2;
-    const customLeadTime = this.frosting
-      ? defaultLeadTime + 2
-      : defaultLeadTime;
-    return isBeforeNoon(orderTime) ? customLeadTime : customLeadTime + 1;
+    return this.frosting ? defaultLeadTime + 2 : defaultLeadTime;
   }
 }

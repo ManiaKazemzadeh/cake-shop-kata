@@ -1,9 +1,10 @@
 import { Temporal } from "temporal-polyfill";
 
 import { Cake, Size } from ".";
-import { addHours } from "./dateUtils";
+import { addHours, addWeeks } from "./dateUtils";
 
 const monday = Temporal.PlainDateTime.from("2022-06-06T00:00:00.000");
+const tuesday = Temporal.PlainDateTime.from("2022-06-07T00:00:00.000");
 const wednesday = Temporal.PlainDateTime.from("2022-06-08T00:00:00.000");
 const thursday = Temporal.PlainDateTime.from("2022-06-09T00:00:00.000");
 const friday = Temporal.PlainDateTime.from("2022-06-10T00:00:00.000");
@@ -12,18 +13,35 @@ const sunday = Temporal.PlainDateTime.from("2022-06-12T00:00:00.000");
 
 describe("At Connascent Cakes, ", () => {
   describe("a small cake, ", () => {
-    const cake = new Cake(Size.Small);
-
     it("ordered on Monday, is delivered on Wednesday", () => {
-      const result = cake.order(addHours(monday, 8));
+      const result = new Cake(Size.Small).order(addHours(monday, 8));
 
       expect(result.equals(wednesday)).toBe(true);
     });
 
     it("ordered after 12pm on Monday, is delivered on Thursday", () => {
-      const result = cake.order(addHours(monday, 13));
+      const result = new Cake(Size.Small).order(addHours(monday, 13));
 
       expect(result.equals(thursday)).toBe(true);
+    });
+
+    // it("ordered on Saturday, is delivered on Tuesday", () => {
+    //   const result = new Cake(Size.Small).order(addHours(saturday, 8));
+    //   const expected = addWeeks(tuesday, 1);
+    //
+    //   expect(result.equals(expected)).toBe(false);
+    // });
+
+    it.each`
+      spec          | dayOfOrder
+      ${"Friday"}   | ${friday}
+      ${"Saturday"} | ${saturday}
+      ${"Sunday"}   | ${sunday}
+    `("ordered on $spec, is delivered on Tuesday", ({ dayOfOrder }) => {
+      const result = new Cake(Size.Small).order(addHours(dayOfOrder, 8));
+      const expected = addWeeks(tuesday, 1);
+
+      expect(result.equals(expected)).toBe(true);
     });
 
     describe("with custom frosting, ", () => {
@@ -73,15 +91,6 @@ describe("At Connascent Cakes, ", () => {
         expect(result.equals(sunday)).toBe(true);
       });
     });
-
-    describe("with nuts, ", () => {
-      it("ordered on Monday, is delivered on Thursday", () => {
-        const result = cake.order(addHours(monday, 8));
-
-        // does marco work?
-        expect(result.equals(thursday)).toBe(true);
-      });
-    });
   });
 
   describe("a big cake, ", () => {
@@ -95,6 +104,19 @@ describe("At Connascent Cakes, ", () => {
       const result = new Cake(Size.Big).order(addHours(monday, 13));
 
       expect(result.equals(friday)).toBe(true);
+    });
+
+    it.each`
+      spec          | dayOfOrder
+      ${"Thursday"} | ${thursday}
+      ${"Friday"}   | ${friday}
+      ${"Saturday"} | ${saturday}
+      ${"Sunday"}   | ${sunday}
+    `("ordered on $spec, is delivered next Thursday", ({ dayOfOrder }) => {
+      const result = new Cake(Size.Big).order(addHours(dayOfOrder, 8));
+      const expected = addWeeks(thursday, 1);
+
+      expect(result.equals(expected)).toBe(true);
     });
 
     describe("with custom frosting, ", () => {

@@ -11,6 +11,21 @@ export function addHours(
   return date.add(new Temporal.Duration(0, 0, 0, 0, hours));
 }
 
+export function addWeeks(
+  date: Temporal.PlainDateTime,
+  weeks: number
+): Temporal.PlainDateTime {
+  return date.add(new Temporal.Duration(0, 0, weeks));
+}
+
 export function isBeforeNoon(date: Temporal.PlainDateTime) {
   return date.hour < 12;
+}
+
+export function isFridayOrSaturday(date: Temporal.PlainDateTime) {
+  return date.dayOfWeek === 5 || date.dayOfWeek === 6;
+}
+
+export function isThursdayToSunday(date: Temporal.PlainDateTime) {
+  return date.dayOfWeek >= 4;
 }
