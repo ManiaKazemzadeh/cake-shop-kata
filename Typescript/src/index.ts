@@ -1,22 +1,26 @@
 import { Temporal } from "temporal-polyfill";
 
-type Size = "small" | "big";
+import { addDays, isBeforeNoon } from "./dateUtils";
 
-function addDays(date: Temporal.PlainDateTime, days: number) {
-  return date.add(new Temporal.Duration(0, 0, 0, days));
+export enum Size {
+  Small,
+  Big,
 }
 
-function getLeadTime(size: Size): number {
-  return size === "small" ? 2 : 3;
-}
+export class Cake {
+  constructor(private size: Size, private frosting?: boolean) {}
 
-export function orderCake(
-  size: Size,
-  orderTime: Temporal.PlainDateTime
-): Temporal.PlainDate {
-  const leadTime = getLeadTime(size);
-  console.log({ orderTime: JSON.stringify(orderTime) });
-  const result = addDays(orderTime, leadTime).toPlainDate();
-  console.log({ result: JSON.stringify(result) });
-  return result;
+  public order(orderTime: Temporal.PlainDateTime): Temporal.PlainDate {
+    const leadTime = this.getLeadTime(orderTime);
+    const result = addDays(orderTime, leadTime).toPlainDate();
+    return result;
+  }
+
+  private getLeadTime(orderTime: Temporal.PlainDateTime): number {
+    const defaultLeadTime = this.size === Size.Small ? 2 : 3;
+    const customLeadTime = this.frosting
+      ? defaultLeadTime + 2
+      : defaultLeadTime;
+    return isBeforeNoon(orderTime) ? customLeadTime : customLeadTime + 1;
+  }
 }
