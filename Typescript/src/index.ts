@@ -8,7 +8,12 @@ export enum Size {
 }
 
 export class Cake {
-  constructor(private size: Size, private frosting?: boolean) {}
+  constructor(
+    private size: Size,
+    private frosting?: boolean,
+    private box?: boolean,
+    private nuts?: boolean
+  ) {}
 
   public order(orderTime: Temporal.PlainDateTime): Temporal.PlainDate {
     const leadTime = this.getLeadTime(orderTime);
@@ -17,7 +22,7 @@ export class Cake {
   }
 
   private getLeadTime(orderTime: Temporal.PlainDateTime): number {
-    const defaultLeadTime = this.size === Size.Small ? 2 : 3;
+    const defaultLeadTime = this.size === Size.Big || this.box ? 3 : 2;
     const customLeadTime = this.frosting
       ? defaultLeadTime + 2
       : defaultLeadTime;

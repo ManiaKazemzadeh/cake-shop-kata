@@ -26,44 +26,123 @@ describe("At Connascent Cakes, ", () => {
       expect(result.equals(thursday)).toBe(true);
     });
 
-    it("with custom frosting, ordered on Monday, is delivered on Friday", () => {
-      const result = new Cake(Size.Small, true).order(addHours(monday, 8));
+    describe("with custom frosting, ", () => {
+      it("ordered on Monday, is delivered on Friday", () => {
+        const result = new Cake(Size.Small, true).order(addHours(monday, 8));
 
-      expect(result.equals(friday)).toBe(true);
+        expect(result.equals(friday)).toBe(true);
+      });
+
+      it("ordered after 12pm on Monday, is delivered on Saturday", () => {
+        const result = new Cake(Size.Small, true).order(addHours(monday, 13));
+
+        expect(result.equals(saturday)).toBe(true);
+      });
     });
 
-    it("with custom frosting, ordered after 12pm on Monday, is delivered on Saturday", () => {
-      const result = new Cake(Size.Small, true).order(addHours(monday, 13));
+    describe("with a fancy box, ", () => {
+      it("ordered on Monday, is delivered on Thursday", () => {
+        const result = new Cake(Size.Small, false, true).order(
+          addHours(monday, 8)
+        );
 
-      expect(result.equals(saturday)).toBe(true);
+        expect(result.equals(thursday)).toBe(true);
+      });
+
+      it("ordered after 12pm on Monday, is delivered on Friday", () => {
+        const result = new Cake(Size.Small, false, true).order(
+          addHours(monday, 13)
+        );
+
+        expect(result.equals(friday)).toBe(true);
+      });
+
+      it("and custom frosting, ordered on Monday, is delivered on Saturday", () => {
+        const result = new Cake(Size.Small, true, true).order(
+          addHours(monday, 8)
+        );
+
+        expect(result.equals(saturday)).toBe(true);
+      });
+
+      it("and custom frosting, ordered after 12pm on Monday, is delivered on Sunday", () => {
+        const result = new Cake(Size.Small, true, true).order(
+          addHours(monday, 13)
+        );
+
+        expect(result.equals(sunday)).toBe(true);
+      });
+    });
+
+    describe("with nuts, ", () => {
+      it("ordered on Monday, is delivered on Thursday", () => {
+        const result = cake.order(addHours(monday, 8));
+
+        // does marco work?
+        expect(result.equals(thursday)).toBe(true);
+      });
     });
   });
 
   describe("a big cake, ", () => {
-    const cake = new Cake(Size.Big, false);
-
     it("ordered on Monday, is delivered on Thursday", () => {
-      const result = cake.order(addHours(monday, 8));
+      const result = new Cake(Size.Big).order(addHours(monday, 8));
 
       expect(result.equals(thursday)).toBe(true);
     });
 
     it("ordered after 12pm on Monday, is delivered on Friday", () => {
-      const result = cake.order(addHours(monday, 13));
+      const result = new Cake(Size.Big).order(addHours(monday, 13));
 
       expect(result.equals(friday)).toBe(true);
     });
 
-    it("with custom frosting, ordered on Monday, is delivered on Saturday", () => {
-      const result = new Cake(Size.Big, true).order(addHours(monday, 8));
+    describe("with custom frosting, ", () => {
+      it("ordered on Monday, is delivered on Saturday", () => {
+        const result = new Cake(Size.Big, true).order(addHours(monday, 8));
 
-      expect(result.equals(saturday)).toBe(true);
+        expect(result.equals(saturday)).toBe(true);
+      });
+
+      it("ordered after 12pm on Monday, is delivered on Sunday", () => {
+        const result = new Cake(Size.Big, true).order(addHours(monday, 13));
+
+        expect(result.equals(sunday)).toBe(true);
+      });
     });
 
-    it("with custom frosting, ordered after 12pm on Monday, is delivered on Sunday", () => {
-      const result = new Cake(Size.Big, true).order(addHours(monday, 13));
+    describe("with a fancy box, ", () => {
+      it("ordered on Monday, is delivered on Thursday", () => {
+        const result = new Cake(Size.Big, false, true).order(
+          addHours(monday, 8)
+        );
 
-      expect(result.equals(sunday)).toBe(true);
+        expect(result.equals(thursday)).toBe(true);
+      });
+
+      it("ordered after 12pm on Monday, is delivered on Friday", () => {
+        const result = new Cake(Size.Big, false, true).order(
+          addHours(monday, 13)
+        );
+
+        expect(result.equals(friday)).toBe(true);
+      });
+
+      it("and custom frosting, ordered on Monday, is delivered on Saturday", () => {
+        const result = new Cake(Size.Big, true, true).order(
+          addHours(monday, 8)
+        );
+
+        expect(result.equals(saturday)).toBe(true);
+      });
+
+      it("and custom frosting, ordered after 12pm on Monday, is delivered on Sunday", () => {
+        const result = new Cake(Size.Big, true, true).order(
+          addHours(monday, 13)
+        );
+
+        expect(result.equals(sunday)).toBe(true);
+      });
     });
   });
 });
