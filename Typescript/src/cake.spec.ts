@@ -66,13 +66,13 @@ describe("At Connascent Cakes, ", () => {
         expect(result.equals(saturday)).toBe(true);
       });
 
-      // // Finished baking on Friday, Sandro does not work Sunday-Monday, so frosting work cannot start until Tuesday
-      // it("ordered on Wednesday, is delivered next Tuesday", () => {
-      //   const result = new Cake(Size.Small, true).order(addHours(wednesday, 8));
-      //   const expected = addWeeks(tuesday, 1);
-      //
-      //   expect(result.equals(expected)).toBe(true);
-      // });
+      // Finished baking on Friday, Sandro does not work Sunday-Monday, so frosting work cannot start until Tuesday
+      it("ordered on Wednesday, is delivered next Thursday", () => {
+        const result = new Cake(Size.Small, true).order(addHours(wednesday, 8));
+        const expected = addWeeks(thursday, 1);
+
+        expect(result.equals(expected)).toBe(true);
+      });
     });
 
     describe("with a fancy box, ", () => {
@@ -147,9 +147,12 @@ describe("At Connascent Cakes, ", () => {
       });
 
       // Finished baking on Friday, Sandro does not work Sunday-Monday, so frosting work cannot start until Tuesday
-      it("ordered after 12pm on Monday, is delivered next Tuesday", () => {
+      it("ordered after 12pm on Monday, is delivered next Thursday", () => {
         const result = new Cake(Size.Big, true).order(addHours(monday, 13));
-        const expected = addWeeks(tuesday, 1);
+        const expected = addWeeks(thursday, 1);
+
+        console.log({ result: JSON.stringify(result) });
+        console.log({ expected: JSON.stringify(expected) });
 
         expect(result.equals(expected)).toBe(true);
       });
@@ -181,11 +184,11 @@ describe("At Connascent Cakes, ", () => {
       });
 
       // Finished baking on Friday, Sandro does not work Sunday-Monday, so frosting work cannot start until Tuesday
-      it("and custom frosting, ordered after 12pm on Monday, is delivered next Tuesday", () => {
+      it("and custom frosting, ordered after 12pm on Monday, is delivered next Thursday", () => {
         const result = new Cake(Size.Big, true, true).order(
           addHours(monday, 13)
         );
-        const expected = addWeeks(tuesday, 1);
+        const expected = addWeeks(thursday, 1);
 
         expect(result.equals(expected)).toBe(true);
       });

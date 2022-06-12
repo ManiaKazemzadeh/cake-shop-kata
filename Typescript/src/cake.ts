@@ -2,7 +2,9 @@ import { Temporal } from "temporal-polyfill";
 
 import {
   addDays,
+  daysUntilNextMonday,
   isBeforeNoon,
+  isFridayToMonday,
   isThursdayToSunday,
   isWednesdayToSunday,
   latest,
@@ -22,10 +24,15 @@ export class Cake {
   ) {}
 
   public order(orderTime: Temporal.PlainDateTime): Temporal.PlainDate {
-    const startBaking = this.startBaking(orderTime);
-    const cakeIsFinished = addDays(startBaking, this.leadTime());
+    const bakeIsFinished = this.bake(orderTime);
+    const cakeIsFinished = this.frost(bakeIsFinished);
 
     return latest(cakeIsFinished, this.boxCake(orderTime)).toPlainDate();
+  }
+
+  private bake(orderTime: Temporal.PlainDateTime) {
+    const startBaking = this.startBaking(orderTime);
+    return addDays(startBaking, this.leadTimeForBake());
   }
 
   private startBaking(orderTime: Temporal.PlainDateTime) {
@@ -38,7 +45,7 @@ export class Cake {
 
   private nextBakingDay(date: Temporal.PlainDateTime) {
     const daysUntilNextBakingDay = this.shouldStartBakingNextMonday(date)
-      ? (1 + 7 - date.dayOfWeek) % 7 || 7
+      ? daysUntilNextMonday(date)
       : 0;
 
     return new Temporal.PlainDateTime(
@@ -49,15 +56,37 @@ export class Cake {
     );
   }
 
-  private shouldStartBakingNextMonday(date: Temporal.PlainDateTime): boolean {
+  private shouldStartBakingNextMonday(date: Temporal.PlainDateTime) {
     return this.size === Size.Small
       ? isThursdayToSunday(date)
       : isWednesdayToSunday(date);
   }
 
-  private leadTime(): number {
-    const defaultLeadTime = this.size === Size.Big ? 3 : 2;
-    return this.frosting ? defaultLeadTime + 2 : defaultLeadTime;
+  private leadTimeForBake() {
+    return this.size === Size.Big ? 3 : 2;
+  }
+
+  private frost(bakeIsFinished: Temporal.PlainDateTime) {
+    if (!this.frosting) return bakeIsFinished;
+
+    const leadTime = 2;
+    const startFrosting = this.nextFrostingDay(bakeIsFinished);
+    return addDays(startFrosting, leadTime);
+  }
+
+  private nextFrostingDay(date: Temporal.PlainDateTime) {
+    const shouldStartFrostingNextTuesday = isFridayToMonday(date);
+
+    const daysUntilNextFrostingDay = shouldStartFrostingNextTuesday
+      ? daysUntilNextMonday(date) + 1 //todo: find a cleaner way of getting next Tuesday
+      : 0;
+
+    return new Temporal.PlainDateTime(
+      date.year,
+      date.month,
+      date.day + daysUntilNextFrostingDay,
+      date.hour
+    );
   }
 
   private boxCake(orderTime: Temporal.PlainDateTime) {

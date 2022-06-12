@@ -30,6 +30,14 @@ export function isWednesdayToSunday(date: Temporal.PlainDateTime) {
   return date.dayOfWeek >= 3;
 }
 
+export function isFridayToMonday(date: Temporal.PlainDateTime) {
+  return date.dayOfWeek >= 5 || date.dayOfWeek === 1;
+}
+
 export function latest(...dates: Array<Temporal.PlainDateTime>) {
   return dates.sort().pop();
+}
+
+export function daysUntilNextMonday(date: Temporal.PlainDateTime) {
+  return (1 + 7 - date.dayOfWeek) % 7 || 7;
 }
