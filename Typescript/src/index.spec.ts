@@ -25,21 +25,14 @@ describe("At Connascent Cakes, ", () => {
       expect(result.equals(thursday)).toBe(true);
     });
 
-    // it("ordered on Saturday, is delivered on Tuesday", () => {
-    //   const result = new Cake(Size.Small).order(addHours(saturday, 8));
-    //   const expected = addWeeks(tuesday, 1);
-    //
-    //   expect(result.equals(expected)).toBe(false);
-    // });
-
     it.each`
       spec          | dayOfOrder
-      ${"Friday"}   | ${friday}
       ${"Saturday"} | ${saturday}
+      ${"Friday"}   | ${friday}
       ${"Sunday"}   | ${sunday}
-    `("ordered on $spec, is delivered on Tuesday", ({ dayOfOrder }) => {
+    `("ordered on $spec, is delivered next Wednesday", ({ dayOfOrder }) => {
       const result = new Cake(Size.Small).order(addHours(dayOfOrder, 8));
-      const expected = addWeeks(tuesday, 1);
+      const expected = addWeeks(wednesday, 1);
 
       expect(result.equals(expected)).toBe(true);
     });

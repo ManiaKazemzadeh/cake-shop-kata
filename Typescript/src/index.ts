@@ -3,7 +3,7 @@ import { Temporal } from "temporal-polyfill";
 import {
   addDays,
   isBeforeNoon,
-  isFridayOrSaturday,
+  isFridayToSunday,
   isThursdayToSunday,
 } from "./dateUtils";
 
@@ -34,17 +34,9 @@ export class Cake {
   }
 
   private nextBakingDay(date: Temporal.PlainDateTime) {
-    let daysUntilNextBakingDay = 0;
-
-    if (this.size === Size.Small) {
-      daysUntilNextBakingDay = isFridayOrSaturday(date) ? 2 : 0;
-    }
-
-    if (this.size === Size.Big) {
-      daysUntilNextBakingDay = isThursdayToSunday(date)
-        ? (1 + 7 - date.dayOfWeek) % 7 || 7
-        : 0;
-    }
+    const daysUntilNextBakingDay = this.shouldStartBakingNextMonday(date)
+      ? (1 + 7 - date.dayOfWeek) % 7 || 7
+      : 0;
 
     return new Temporal.PlainDateTime(
       date.year,
@@ -52,6 +44,12 @@ export class Cake {
       date.day + daysUntilNextBakingDay,
       date.hour
     );
+  }
+
+  private shouldStartBakingNextMonday(date: Temporal.PlainDateTime): boolean {
+    return this.size === Size.Small
+      ? isFridayToSunday(date)
+      : isThursdayToSunday(date);
   }
 
   private leadTime(): number {

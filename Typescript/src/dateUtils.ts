@@ -22,8 +22,8 @@ export function isBeforeNoon(date: Temporal.PlainDateTime) {
   return date.hour < 12;
 }
 
-export function isFridayOrSaturday(date: Temporal.PlainDateTime) {
-  return date.dayOfWeek === 5 || date.dayOfWeek === 6;
+export function isFridayToSunday(date: Temporal.PlainDateTime) {
+  return date.dayOfWeek >= 5;
 }
 
 export function isThursdayToSunday(date: Temporal.PlainDateTime) {
