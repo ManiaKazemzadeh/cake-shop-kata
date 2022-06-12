@@ -5,6 +5,7 @@ import {
   daysUntilNextMonday,
   isBeforeNoon,
   isFridayToMonday,
+  isFridayToSunday,
   isThursdayToSunday,
   isWednesdayToSunday,
   latest,
@@ -24,8 +25,9 @@ export class Cake {
   ) {}
 
   public order(orderTime: Temporal.PlainDateTime): Temporal.PlainDate {
-    const bakeIsFinished = this.bake(orderTime);
-    const cakeIsFinished = this.frost(bakeIsFinished);
+    const baked = this.bake(orderTime);
+    const frosted = this.frost(baked);
+    const cakeIsFinished = this.addNuts(frosted);
 
     return latest(cakeIsFinished, this.boxCake(orderTime)).toPlainDate();
   }
@@ -87,6 +89,16 @@ export class Cake {
       date.day + daysUntilNextFrostingDay,
       date.hour
     );
+  }
+
+  private addNuts(date: Temporal.PlainDateTime) {
+    if (!this.nuts) return date;
+
+    const leadTimeForAddingNuts = isFridayToSunday(date)
+      ? daysUntilNextMonday(date) + 1
+      : 1;
+
+    return addDays(date, leadTimeForAddingNuts);
   }
 
   private boxCake(orderTime: Temporal.PlainDateTime) {
