@@ -3,8 +3,9 @@ import { Temporal } from "temporal-polyfill";
 import {
   addDays,
   isBeforeNoon,
-  isFridayToSunday,
   isThursdayToSunday,
+  isWednesdayToSunday,
+  latest,
 } from "./dateUtils";
 
 export enum Size {
@@ -22,7 +23,9 @@ export class Cake {
 
   public order(orderTime: Temporal.PlainDateTime): Temporal.PlainDate {
     const startBaking = this.startBaking(orderTime);
-    return addDays(startBaking, this.leadTime()).toPlainDate();
+    const cakeIsFinished = addDays(startBaking, this.leadTime());
+
+    return latest(cakeIsFinished, this.boxCake(orderTime)).toPlainDate();
   }
 
   private startBaking(orderTime: Temporal.PlainDateTime) {
@@ -48,12 +51,16 @@ export class Cake {
 
   private shouldStartBakingNextMonday(date: Temporal.PlainDateTime): boolean {
     return this.size === Size.Small
-      ? isFridayToSunday(date)
-      : isThursdayToSunday(date);
+      ? isThursdayToSunday(date)
+      : isWednesdayToSunday(date);
   }
 
   private leadTime(): number {
-    const defaultLeadTime = this.size === Size.Big || this.box ? 3 : 2;
+    const defaultLeadTime = this.size === Size.Big ? 3 : 2;
     return this.frosting ? defaultLeadTime + 2 : defaultLeadTime;
+  }
+
+  private boxCake(orderTime: Temporal.PlainDateTime) {
+    return this.box ? addDays(orderTime, 3) : orderTime;
   }
 }

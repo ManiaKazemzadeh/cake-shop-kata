@@ -22,10 +22,14 @@ export function isBeforeNoon(date: Temporal.PlainDateTime) {
   return date.hour < 12;
 }
 
-export function isFridayToSunday(date: Temporal.PlainDateTime) {
-  return date.dayOfWeek >= 5;
-}
-
 export function isThursdayToSunday(date: Temporal.PlainDateTime) {
   return date.dayOfWeek >= 4;
+}
+
+export function isWednesdayToSunday(date: Temporal.PlainDateTime) {
+  return date.dayOfWeek >= 3;
+}
+
+export function latest(...dates: Array<Temporal.PlainDateTime>) {
+  return dates.sort().pop();
 }
