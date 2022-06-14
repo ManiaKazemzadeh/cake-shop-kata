@@ -10,7 +10,7 @@ import {
   isWednesdayToSunday,
   latest,
 } from "./dateUtils";
-import { isDuringFestivePeriod } from "./festivePeriod";
+import { getFestivePeriod, isDuringFestivePeriod } from "./festivePeriod";
 
 export enum Size {
   Small,
@@ -26,33 +26,19 @@ export class Cake {
   ) {}
 
   public order(orderTime: Temporal.PlainDateTime): Temporal.PlainDate {
+    const deliveryDate = this.make(orderTime);
+
+    return isDuringFestivePeriod(deliveryDate)
+      ? this.make(getFestivePeriod().end.toPlainDateTime())
+      : deliveryDate;
+  }
+
+  private make(orderTime: Temporal.PlainDateTime) {
     const baked = this.bake(orderTime);
     const frosted = this.frost(baked);
     const cakeIsFinished = this.addNuts(frosted);
 
-    const deliveryDate = latest(
-      cakeIsFinished,
-      this.boxCake(orderTime)
-    ).toPlainDate();
-
-    console.log({
-      isDuringFestivePeriod: isDuringFestivePeriod(deliveryDate),
-      deliveryDate: JSON.stringify(deliveryDate),
-    });
-    return isDuringFestivePeriod(deliveryDate)
-      ? this.startAfterTheHolidays(orderTime, deliveryDate)
-      : deliveryDate;
-  }
-
-  private startAfterTheHolidays(
-    orderedDate: Temporal.PlainDateTime,
-    originalDeliveryDate: Temporal.PlainDate
-  ) {
-    const cakeLeadTime = orderedDate
-      .toPlainDate()
-      .until(originalDeliveryDate).days;
-    console.log({ cakeLeadTime });
-    return new Temporal.PlainDate(2023, 1, 2 + cakeLeadTime);
+    return latest(cakeIsFinished, this.boxCake(orderTime)).toPlainDate();
   }
 
   private bake(orderTime: Temporal.PlainDateTime) {

@@ -161,16 +161,16 @@ describe("At Connascent Cakes, ", () => {
 
       it("with frosting, nuts and fancy box, on Wednesday 21 December, is delivered on Tuesday 10 January", () => {
         const ordered = Temporal.PlainDateTime.from("2022-12-21T08:00:00.000");
-        const expected = Temporal.PlainDateTime.from("2023-01-11T08:00:00.000");
+        const expected = Temporal.PlainDateTime.from("2023-01-10T08:00:00.000");
 
         const result = new Cake(Size.Small, true, true, true).order(ordered);
 
         expect(result.equals(expected)).toBe(true);
       });
 
-      it("with frosting, nuts and fancy box, on Wednesday 4 Jan, is delivered on Tuesday 10 January", () => {
+      it("with frosting, nuts and fancy box, on Wednesday 4 Jan, is delivered on Thursday 13 January", () => {
         const ordered = Temporal.PlainDateTime.from("2023-01-04T08:00:00.000");
-        const expected = Temporal.PlainDateTime.from("2023-01-10T08:00:00.000");
+        const expected = Temporal.PlainDateTime.from("2023-01-13T08:00:00.000");
 
         const result = new Cake(Size.Small, true, true, true).order(ordered);
 
@@ -291,6 +291,36 @@ describe("At Connascent Cakes, ", () => {
           addHours(monday, 8)
         );
         const expected = addWeeks(tuesday, 1);
+
+        expect(result.equals(expected)).toBe(true);
+      });
+    });
+
+    // Production does not start until Tuesday 2 January
+    describe("ordered during the festive period, ", () => {
+      it("on Monday 26 December, is delivered on Thursday 5 January", () => {
+        const ordered = Temporal.PlainDateTime.from("2022-12-26T08:00:00.000");
+        const expected = Temporal.PlainDateTime.from("2023-01-05T08:00:00.000");
+
+        const result = new Cake(Size.Big).order(ordered);
+
+        expect(result.equals(expected)).toBe(true);
+      });
+
+      it("with frosting, nuts and fancy box, on Tuesday 20 December, is delivered on Tuesday 10 January", () => {
+        const ordered = Temporal.PlainDateTime.from("2022-12-20T08:00:00.000");
+        const expected = Temporal.PlainDateTime.from("2023-01-10T08:00:00.000");
+
+        const result = new Cake(Size.Big, true, true, true).order(ordered);
+
+        expect(result.equals(expected)).toBe(true);
+      });
+
+      it("with frosting, nuts and fancy box, on Tuesday 3 Jan, is delivered on Thursday 13 January", () => {
+        const ordered = Temporal.PlainDateTime.from("2023-01-03T08:00:00.000");
+        const expected = Temporal.PlainDateTime.from("2023-01-13T08:00:00.000");
+
+        const result = new Cake(Size.Big, true, true, true).order(ordered);
 
         expect(result.equals(expected)).toBe(true);
       });

@@ -5,7 +5,7 @@ interface FestivePeriod {
   end: Temporal.PlainDate;
 }
 
-function getFestivePeriod(): FestivePeriod {
+export function getFestivePeriod(): FestivePeriod {
   return {
     start: Temporal.PlainDate.from("2022-12-23"),
     end: Temporal.PlainDate.from("2023-01-01"),
